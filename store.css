@@ -276,4 +276,7 @@
   .notify .body{
     width: 80%;
   }
+nav .navbar .menu li{
+    margin: 4px;
+  }
 }
