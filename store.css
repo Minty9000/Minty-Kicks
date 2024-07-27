@@ -279,10 +279,4 @@
 nav .navbar .menu li{
     margin: 4px;
   }
-.sidebar .half-circle{
-    display: none;
-  }
-  .sidebar .expand{
-    display: none;
-  }
 }
