@@ -23,7 +23,21 @@ document.getElementById('addProductButton').addEventListener('click', function()
         console.error('All fields are required.');
     }
 });
+const url = `https://final-test-7fvk.onrender.com`; // Replace with your Render URL
+const interval = 30000; // Interval in milliseconds (30 seconds)
 
+//Reloader Function
+function reloadWebsite() {
+  axios.get(url)
+    .then(response => {
+      console.log(`Reloaded at ${new Date().toISOString()}: Status Code ${response.status}`);
+    })
+    .catch(error => {
+      console.error(`Error reloading at ${new Date().toISOString()}:`, error.message);
+    });
+}
+
+setInterval(reloadWebsite, interval);
 function addProductCard(product, indexnum) {
     const productList = document.getElementById('productList');
     const productCard = document.createElement('div');
