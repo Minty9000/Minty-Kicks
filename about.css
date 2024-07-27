@@ -350,4 +350,7 @@ nav .navbar .title{
 nav .navbar .menu li{
     margin: 4px;
   }
+.main{
+      height: auto;
+    }
 }
