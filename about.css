@@ -347,4 +347,7 @@ nav .navbar .title{
   .main .cata img{
     width: 300px;
    }
+nav .navbar .menu li{
+    margin: 4px;
+  }
 }
