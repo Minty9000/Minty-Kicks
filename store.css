@@ -268,10 +268,10 @@
 }
 @media (max-width:800px){
   nav .navbar .title{
-    font-size: 20px;
+    font-size: 17px;
   }
   nav .navbar .menu a{
-    font-size: 17px;
+    font-size: 14px;
   }
   .notify .body{
     width: 80%;
