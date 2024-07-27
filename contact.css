@@ -303,4 +303,7 @@
     nav .navbar .menu a{
       font-size: 17px;
     }
+    nav .navbar .menu li{
+    margin: 4px;
+  }
   }
