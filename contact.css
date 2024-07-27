@@ -286,9 +286,10 @@
       font-family: 'Ubuntu', sans-serif;
       font-size: 20px;
       width: 130%;
+      margin-bottom: 10px;
     }
     .main .form p{
-      font-size: 18px;
+      font-size: 10px;
     }
     .main .form button{
       border-radius: 6px;
