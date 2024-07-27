@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playwrite+DK+Loopet:wght@100..400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="contact.css">
+    <title>Document</title>
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <div class="title">
+                <h1>Minty Kicks</h1>
+            </div>
+            <u1 class="icon">
+                <img src="images\Untitled drawing.jpg" width="80px" />
+            </u1>  
+            <u1 class="menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </u1>
+        </div>
+    </nav>
+    <section class="sidebar" id="sidebar">
+        <div class="title">
+            <h2>Minty Kicks</h2>
+            <p>SideMenu</p>
+        </div>
+        <div class="mainMenu">
+			<a href="index.html"><button>Home</button></a>
+            <a href="about.html"><button>About</button></a>
+            <a href="contact.html"><button>Contact</button></a>
+            <a href="admin.html"><button>Admin</button></a>
+		</div>
+        <div class="footer">
+            <p>Created by Gilbert Teng | © Minty Kicks 2024 All Rights Reserved.</p>
+        </div>
+        <div class="expand" id="expand"><span style="font-size: 40px; cursor: pointer"
+        onclick="openBar()">&#x203A;</span></div>
+        <div class="close" id="close"><span style="font-size: 40px; cursor: pointer"
+        onclick="closeBar()">&lsaquo;</span></div>
+        <div class="half-circle" id="half-circle"></div>
+        <div class="close-circle" id="close-circle"></div>
+        <div class="xmark" id="xmark"><button onclick="closeBar()">X</button></div>
+    </section>
+    <section class="main" id="main">
+        <div class="content">
+            <div class="logo">
+                <img src="images\Untitled drawing.jpg" width="500px" />
+            </div>
+            <div class="form">
+                <h2>If you would like to contact me directly, use the information below or you can send me an email through the form below!</h2>
+                <p>Email: gilbertoteng86@gmail.com</p>
+                <p>Phone Number: 732-642-2593</p>
+                <p>Instagram:@Gilbert_o_Teng</p>
+                <H1>Contact Me</H1>
+                <form action="https://api.web3forms.com/submit" method="POST">
+                    <input type="hidden" name="access_key" value="7b671de1-31cb-48d9-843d-3b29335ec834">
+                    <input type="text" id="name" name="name" required placeholder="Name"><br><br>
+                    <input type="email" id="email" name="email" required placeholder="Email"><br><br>
+                    <input type="text" name="_subject" required placeholder="Subject">
+                    <textarea id="message" name="message" rows="5" required placeholder="Message"></textarea><br><br>
+                    <input type="hidden" name="_next" value="contact.html">
+                    <button type="Submit" >Send</button>
+                </form>  
+            </div>
+        </div>
+    </section>
+    <script src="about.js"></script>
+</body>
+</html>

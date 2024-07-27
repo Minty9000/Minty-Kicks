@@ -1,0 +1,306 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Ubuntu:wght@400;500;700&display=swap');
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  scroll-behavior: smooth;
+}
+:root{
+    --primary-color: #639699;
+      --black-color:#0E2431;
+      --white-color:#fff;
+      --back-color:#e4e1e1dc;
+  }
+  
+  nav{
+    width: 100%;
+    padding: 20px 0;
+    height: auto;
+  }
+  nav .navbar{
+    width: 95%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: auto;
+  }
+  nav .navbar{
+    width: 95%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: auto;
+  }
+  nav .navbar .menu{
+    display: flex;
+    position: relative;
+    align-self: flex-start;
+    margin-right: 30px;
+    margin-top: 30px;
+    font-family: 'Ubuntu', sans-serif;
+  }
+  nav .navbar .menu li{
+    list-style: none;
+    margin: 0 8px;
+  }
+  nav .navbar .menu a{
+    font-size: 22px;
+    font-weight: 500;
+    color:#0E2431;
+    padding:6px 0;  
+    transition: all 0.4s ease;
+  }
+  nav .navbar .menu a:hover{
+    color: #639699;
+  }
+  .nav .icon{
+  position: absolute;
+  right: 50%;
+  }
+  nav .navbar .title{
+    font-size: 27px;
+    font-family: "Playwrite DK Loopet", cursive;
+  }
+  .sidebar{
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background:#fff;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+  }
+  .sidebar .mainMenu{
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    color: #568486;
+    height: 50%;
+    row-gap: 50px;
+  }
+  .sidebar .title{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    color: #568486;
+    font-size: 20px;
+    font-weight: 600;
+  }
+  .sidebar h2{
+    font-size:40px;
+    color: #000;
+  }
+  .sidebar .footer{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    text-align: center;
+    justify-content: flex-end;
+    height: 30%;
+  }
+  .sidebar button{
+    color: #568486;
+    background-color: transparent;
+    border-color: transparent;
+    font-size: 25px;
+    width: 50%;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 1;
+  }
+  .sidebar button:hover{
+    color: #000000;
+  }
+  .sidebar .expand{
+    position:fixed;
+    top: 45%;
+    left:10px;
+    z-index: 1;
+  
+  }
+  .sidebar .close{
+    position:fixed;
+    top: 45%;
+    left:310px;
+    z-index: 1;
+    display: none;
+    transition: height 0.5s ease, opacity 0.5s ease;
+  }
+  .sidebar .half-circle{
+    position: fixed;
+    top: 43%;
+    left:0;
+    width: 40px;   
+    height: 85px;  
+    border-top-right-radius: 50px;  
+    border-bottom-right-radius: 60px;
+    border: 2px solid #000;
+    border-left: none;  
+    background-color: #568486;
+    border-color: #568486;
+    display: block;
+  
+  }
+  .sidebar .close-circle{
+    position: fixed;
+    top: 43%;
+    left:300px;
+    width: 40px;   
+    height: 85px;  
+    border-top-right-radius: 50px;  
+    border-bottom-right-radius: 60px;
+    border: 2px solid #000;
+    border-left: none;  
+    background-color: #568486;
+    border-color: #568486;
+    display: none;
+    transition: height 0.5s ease, opacity 0.5s ease;
+  }
+  .sidebar .xmark{
+    font-size: 30px;
+    font-weight: 500;
+    position: fixed;
+    left: 260px;
+    top: 30px;
+    color: #568486;
+    display: none;
+  }
+  .main{
+    height: 90vh;
+    background:url("images/image (1).png") no-repeat;
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+  }
+  .main .content{
+    width: 85%;
+    height: 90%;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .main .form{
+    width: 35%;
+    margin-right: 100px; 
+  }
+  .main .form h2{
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 20px;
+    width: 110%;
+  }
+  .main .form p{
+    font-size: 18px;
+    margin-top: 3px;
+  }
+  .main .form h1{
+    font-size: 60px;
+    font-family: 'Ubuntu', sans-serif;
+    font-weight: 600;
+    color: #639699;
+  }
+  .main .form input{
+    background-color: transparent; 
+    border: none; 
+    border-bottom: 2px solid black; 
+    padding: 5px 0; 
+    outline: none; 
+   color: black;
+    font-size: 19px; 
+    width: 110%;
+    display: flex;
+    gap: 20px;
+  }
+  .main .form textarea{
+    font-family: 'Poppins', sans-serif;
+    margin-top: 30px;
+    background-color: transparent; 
+    border: none; 
+    border-bottom: 2px solid black; 
+    padding: 5px 0; 
+    outline: none; 
+    color: black;
+    font-size: 20px; 
+    width: 80%;
+    height: 150px;
+  }
+  .main .form button{
+    background-color:#639699;
+    color:#ffffff;
+    border-color:#639699;
+    border-radius: 8px;
+    font-size: 25px;
+    padding:6px 12px;
+    font-weight:400;
+    border:solid transparent;
+    transition: all 0.4s ease;
+    margin-top: 10px;
+    font-family: 'Ubuntu', sans-serif;
+  }
+  .main .form button:hover{
+    color:#639699;
+    background-color:#fff;
+    border-color:#639699;
+    cursor: pointer;
+  }
+  @media (max-width:1100px){
+    .main .content{
+    flex-direction: column;
+    width: 85%;
+    }
+    .main img{
+      margin-top: 10px;
+      width: 300px;
+    }
+    .main .form{
+      width: 80%;
+      margin-top: 10px;
+    }
+    .main .form h1{
+      font-size: 35px;
+    }
+    .main .form input{
+      background-color: transparent; 
+    border: none; 
+    border-bottom: 2px solid black; 
+    padding: 5px 0; 
+    outline: none; 
+   color: black;
+    font-size: 15px; 
+    width: 110%;
+    display: flex;
+    gap: 0px;
+    }
+    .main .form textarea{
+      height: 80px;
+      margin-top: 10px;
+    }
+    .main .form h2{
+      font-family: 'Ubuntu', sans-serif;
+      font-size: 17px;
+      width: 130%;
+    }
+    .main .form p{
+      font-size: 15px;
+    }
+    .main .form button{
+      border-radius: 6px;
+      font-size: 20px;
+      padding:5px 10px;
+      font-weight:400;
+    }
+  }
+  @media (max-width:800px){
+    nav .navbar .title{
+      font-size: 20px;
+    }
+    nav .navbar .menu a{
+      font-size: 17px;
+    }
+  }

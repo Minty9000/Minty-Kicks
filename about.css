@@ -1,0 +1,350 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Ubuntu:wght@400;500;700&display=swap');
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  scroll-behavior: smooth;
+}
+:root{
+  --primary-color: #639699;
+    --black-color:#0E2431;
+    --white-color:#fff;
+    --back-color:#e4e1e1dc;
+}
+
+nav{
+  width: 100%;
+  padding: 20px 0;
+  height: auto;
+}
+nav .navbar{
+  width: 95%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: auto;
+}
+nav .navbar{
+  width: 95%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: auto;
+}
+nav .navbar .menu{
+  display: flex;
+  position: relative;
+  align-self: flex-start;
+  margin-right: 30px;
+  margin-top: 20px;
+  font-family: 'Ubuntu', sans-serif;
+}
+nav .navbar .menu li{
+  list-style: none;
+  margin: 0 8px;
+}
+nav .navbar .menu a{
+  font-size: 22px;
+  font-weight: 500;
+  color:#0E2431;
+  padding:6px 0;  
+  transition: all 0.4s ease;
+}
+nav .navbar .menu a:hover{
+  color: #639699;
+}
+.nav .icon{
+position: absolute;
+right: 50%;
+}
+nav .navbar .title{
+  font-size: 27px;
+  font-family: "Playwrite DK Loopet", cursive;
+}
+.main{
+  height: 90vh;
+  background:url("images/image (1).png") no-repeat;
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+}
+.main .content{
+  width: 85%;
+  height: 90%;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.main .text{
+  width: 45%;
+}
+.main .text-one{
+  font-size: 25px;
+  color:#0E2431;
+}
+.main .text-two{
+  font-size: 75px;
+  color:#639699;
+  font-weight: 500;
+  margin-left: -3px;
+}
+.main .text-three{
+  font-size: 35px;
+  color:#0E2431;
+  font-weight: 500;
+  margin-left: -3px;
+}
+.main .text button{
+  background-color:#639699;
+  color:#ffffff;
+  border-color:#639699;
+  border-radius: 8px;
+  font-size: 25px;
+  padding:8px 16px;
+  font-weight:400;
+  border:solid transparent;
+  transition: all 0.4s ease;
+  margin-top: 15px;
+  font-family: 'Ubuntu', sans-serif;
+}
+.main .text button:hover{
+  color:#639699;
+  background-color:#fff;
+  border-color:#639699;
+  cursor: pointer;
+}
+.main .cata{
+  width: 50%;
+}
+.main .cata h2{
+  font-size: 35px;
+  font-weight: 900;
+  margin-bottom: 10px;
+  color: #639699;
+}
+.main .cata p{
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+.main .cata button{
+  background-color:#639699;
+  color:#ffffff;
+  border-color:#639699;
+  border-radius: 8px;
+  font-size: 25px;
+  padding:6px 12px;
+  font-weight:400;
+  border:solid transparent;
+  transition: all 0.4s ease;
+  margin-top: 10px;
+  font-family: 'Ubuntu', sans-serif;
+}
+.main .cata button:hover{
+  color:#639699;
+  background-color:#fff;
+  border-color:#639699;
+  cursor: pointer;
+}
+.sidebar{
+  height: 100%;
+	width: 0;
+	position: fixed;
+	z-index: 1;
+	top: 0;
+	left: 0;
+	background:#fff;
+	overflow-x: hidden;
+	transition: 0.5s;
+	padding-top: 60px;
+}
+.sidebar .mainMenu{
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  color: #568486;
+  height: 50%;
+  row-gap: 50px;
+}
+.sidebar .title{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  color: #568486;
+  font-size: 20px;
+  font-weight: 600;
+}
+.sidebar h2{
+  font-size:40px;
+  color: #000;
+}
+.sidebar .footer{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  text-align: center;
+  justify-content: flex-end;
+  height: 30%;
+}
+.sidebar button{
+  color: #568486;
+  background-color: transparent;
+  border-color: transparent;
+  font-size: 25px;
+  width: 50%;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 1;
+}
+.sidebar button:hover{
+  color: #000000;
+}
+.sidebar .expand{
+  position:fixed;
+  top: 45%;
+  left:10px;
+  z-index: 1;
+
+}
+.sidebar .close{
+  position:fixed;
+  top: 45%;
+  left:310px;
+  z-index: 1;
+  display: none;
+  transition: height 0.5s ease, opacity 0.5s ease;
+}
+.sidebar .half-circle{
+  position: fixed;
+  top: 43%;
+  left:0;
+  width: 40px;   
+  height: 85px;  
+  border-top-right-radius: 50px;  
+  border-bottom-right-radius: 60px;
+  border: 2px solid #000;
+  border-left: none;  
+  background-color: #568486;
+  border-color: #568486;
+  display: block;
+
+}
+.sidebar .close-circle{
+  position: fixed;
+  top: 43%;
+  left:300px;
+  width: 40px;   
+  height: 85px;  
+  border-top-right-radius: 50px;  
+  border-bottom-right-radius: 60px;
+  border: 2px solid #000;
+  border-left: none;  
+  background-color: #568486;
+  border-color: #568486;
+  display: none;
+  transition: height 0.5s ease, opacity 0.5s ease;
+}
+.sidebar .xmark{
+  font-size: 30px;
+  font-weight: 500;
+  position: fixed;
+  left: 260px;
+  top: 30px;
+  color: #568486;
+  display: none;
+}
+@media (max-width:1500px){
+ .main .cata img{
+  width: 400px;
+ }
+ .main .cata{
+  width: 60%;
+ }
+ .main .cata h2{
+  font-size: 25px;
+  font-weight: 900;
+  margin-bottom: 10px;
+  color: #639699;
+}
+.main .cata p{
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+.main .text-one{
+  font-size: 17px;
+}
+.main .text-two{
+  font-size: 55px;
+  color:#639699;
+  font-weight: 500;
+  margin-left: -3px;
+}
+.main .text-three{
+  font-size: 25px;
+  color:#0E2431;
+  font-weight: 500;
+  margin-left: -3px;
+}
+.main .text button{
+  border-radius: 6px;
+  font-size: 20px;
+  padding:6px 12px;
+}
+}
+@media (max-width:700px){
+   .main .content{
+    flex-direction: column;
+   }
+   .main .text{
+    width: 90%;
+  }
+   .main .cata{
+    width: 90%;
+   }
+   .main .cata h2{
+    font-size: 25px;
+    font-weight: 900;
+    margin-bottom: 10px;
+    color: #639699;
+    margin-top: 10px;
+  }
+  .main .cata p{
+    font-size: 17px;
+    margin-bottom: 20px;
+  }
+  .main .text-one{
+    margin-top: 20px;
+    font-size: 20px;
+  }
+  .main .text-two{
+    font-size: 55px;
+    color:#639699;
+    font-weight: 500;
+    margin-left: -3px;
+  }
+  .main .text-three{
+    font-size: 25px;
+    color:#0E2431;
+    font-weight: 500;
+    margin-left: -3px;
+  }
+  .main .cata button{
+    border-radius: 6px;
+    font-size: 20px;
+    padding:6px 12px;
+  }
+}
+@media (max-width:800px){
+  nav .navbar .title{
+    font-size: 20px;
+  }
+  nav .navbar .menu a{
+    font-size: 17px;
+  }
+  .main .cata img{
+    width: 300px;
+   }
+}

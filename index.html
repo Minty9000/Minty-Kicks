@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minty Kicks</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playwrite+DK+Loopet:wght@100..400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="store.css">
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <div class="title">
+                <h1>Minty Kicks</h1>
+            </div>
+            <u1 class="icon">
+                <img src="images\Untitled drawing.jpg" width="80px" />
+            </u1>  
+            <u1 class="menu">
+                <li><a href="#main">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </u1>
+        </div>
+    </nav>
+    <section class="sidebar" id="sidebar">
+        <div class="title">
+            <h2>Minty Kicks</h2>
+            <p>SideMenu</p>
+        </div>
+        <div class="mainMenu">
+			<a href="index.html"><button>Home</button></a>
+            <a href="about.html"><button>About</button></a>
+            <a href="contact.html"><button>Contact</button></a>
+            <a href="admin.html"><button>Admin</button></a>
+		</div>
+        <div class="footer">
+            <p>Created by Gilbert Teng | © Minty Kicks 2024 All Rights Reserved.</p>
+        </div>
+        <div class="expand" id="expand"><span style="font-size: 40px; cursor: pointer"
+        onclick="openBar()">&#x203A;</span></div>
+        <div class="close" id="close"><span style="font-size: 40px; cursor: pointer"
+        onclick="closeBar()">&lsaquo;</span></div>
+        <div class="half-circle" id="half-circle"></div>
+        <div class="close-circle" id="close-circle"></div>
+        <div class="xmark" id="xmark"><button onclick="closeBar()">X</button></div>
+    </section>
+    
+
+    <section class="notify">
+        <div class="body">
+            <h1>How To Purchase</h1>
+            <p>Everything listed here is what I currently have in stock, but if there is anything you are looking for, just let me know, and I'll see if I can source it for you! If you're interested in anything, just contact me and send me an offer, and we'll work things out!</p>
+            <a href="contact.html">
+                <button>Contact Me</button>
+              </a>
+        </div>
+    </section>
+    <section class="product">
+        <div class="main">
+            <h2 class="product-cat">Available</h2>
+            <p>Note: all sizes listed are in mens sizing</p>
+            <form id="sizeNeeded">
+                <label for="sizeSelector">Choose a size:</label>
+                <select id="sizeSelector" >
+                 <option value="0">all sizes</option>
+                 <option value="5">5</option>
+                 <option value="5.5">5.5</option>
+                 <option value="6">6</option>
+                 <option value="6.5">6.5</option>
+                <option value="7">7</option>
+                <option value="7.5">7.5</option>
+                <option value="8">8</option>
+                <option value="8.5">8.5</option>
+                 <option value="9">9</option>
+                 <option value="9.5">9.5</option>
+                <option value="10">10</option>
+                <option value="10.5">10.5</option>
+                <option value="11">11</option>
+                <option value="11.5">11.5</option>
+                <option value="12">12</option>
+                 <option value="12.5">12.5</option>
+                <option value="13">13</option>
+             </select>
+            <button id="searchSize">Search</button>
+            </form>
+            <div class="product-list" id="productList">
+               
+            </div>
+        </div>
+            
+    </section>
+    <script src="store.js"></script>
+</body>
+</html>
