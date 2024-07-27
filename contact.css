@@ -263,7 +263,8 @@
       margin-top: 10px;
     }
     .main .form h1{
-      font-size: 35px;
+      font-size: 40px;
+      margin-top: 10px;
     }
     .main .form input{
       background-color: transparent; 
@@ -283,11 +284,11 @@
     }
     .main .form h2{
       font-family: 'Ubuntu', sans-serif;
-      font-size: 17px;
+      font-size: 20px;
       width: 130%;
     }
     .main .form p{
-      font-size: 15px;
+      font-size: 18px;
     }
     .main .form button{
       border-radius: 6px;
