@@ -23,7 +23,7 @@ document.getElementById('addProductButton').addEventListener('click', function()
         console.error('All fields are required.');
     }
 });
-const url = `https://final-test-7fvk.onrender.com`; // Replace with your Render URL
+const url = `https://sneaker-serer.onrender.com`; // Replace with your Render URL
 const interval = 30000; // Interval in milliseconds (30 seconds)
 
 //Reloader Function
@@ -52,7 +52,7 @@ function addProductCard(product, indexnum) {
 }
 
 function addProductToServer(product) {
-    fetch('https://final-test-7fvk.onrender.com/data', {
+    fetch('https://sneaker-serer.onrender.com/data', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -73,7 +73,7 @@ function addProductToServer(product) {
 }
 
 function initializeProductList() {
-    fetch('https://final-test-7fvk.onrender.com/data')
+    fetch('https://sneaker-serer.onrender.com/data')
     .then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -90,7 +90,7 @@ function initializeProductList() {
 }
 
 function deleteProduct(indexnum) {
-    fetch(`https://final-test-7fvk.onrender.com/data/${indexnum}`, {
+    fetch(`https://sneaker-serer.onrender.com/data/${indexnum}`, {
         method: 'DELETE'
     })
     .then(response => {
