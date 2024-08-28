@@ -14,7 +14,7 @@ function addProductCard(product) {
 
 // Retrieve products from the server and display them based on size
 function initializeProductList(size) {
-    fetch('https://final-test-7fvk.onrender.com/data')
+    fetch('https://sneaker-serer.onrender.com/data')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
