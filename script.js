@@ -1,164 +1,116 @@
-document.getElementById('addProductButton').addEventListener('click', function() {
-    const name = document.getElementById('productName').value;
-    const size = document.getElementById('productSize').value;
-    const price = document.getElementById('productPrice').value;
-    const imageFile = document.getElementById('productImage').files[0];
+const API_URL = 'https://minty-kicks.onrender.com';
+const productList = document.getElementById('productList');
+const form = document.getElementById('productForm');
+const formStatus = document.getElementById('formStatus');
+let adminPassword = '';
 
-    if (name && size && price && imageFile) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            const imageUrl = event.target.result;
+function escapeHtml(value) {
+  return String(value).replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char]);
+}
 
-            const product = {
-                name: name,
-                size: size,
-                price: parseFloat(price),
-                imageUrl: imageUrl
-            };
+function setStatus(message, type = '') {
+  formStatus.textContent = message;
+  formStatus.className = `form-status ${type}`;
+}
 
-            addProductToServer(product);
-        };
-        reader.readAsDataURL(imageFile);
-    } else {
-        console.error('All fields are required.');
-    }
+function compressImage(file) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = () => { image.src = reader.result; };
+    image.onerror = reject;
+    image.onload = () => {
+      const max = 1200;
+      const scale = Math.min(1, max / Math.max(image.width, image.height));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(image.width * scale);
+      canvas.height = Math.round(image.height * scale);
+      canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL('image/webp', 0.78));
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function apiRequest(path, options = {}) {
+  const response = await fetch(`${API_URL}${path}`, {
+    ...options,
+    headers: { 'Content-Type': 'application/json', 'x-admin-password': adminPassword, ...(options.headers || {}) }
+  });
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({}));
+    throw new Error(body.message || 'Request failed.');
+  }
+  return response.status === 204 ? null : response.json();
+}
+
+async function loadProducts() {
+  productList.innerHTML = '<p class="muted">Loading inventory…</p>';
+  try {
+    const response = await fetch(`${API_URL}/data`);
+    if (!response.ok) throw new Error();
+    const products = await response.json();
+    productList.innerHTML = products.length ? products.map((product) => `
+      <article class="admin-product">
+        <img src="${product.imageUrl}" alt="">
+        <div><strong>${escapeHtml(product.name)}</strong><span>Size ${product.size} · $${Number(product.price).toFixed(2)}</span></div>
+        <button class="danger-button" data-delete="${product.id}" aria-label="Delete ${escapeHtml(product.name)}">Delete</button>
+      </article>`).join('') : '<p class="muted">No inventory yet.</p>';
+  } catch (_error) {
+    productList.innerHTML = '<p class="error">Could not load inventory.</p>';
+  }
+}
+
+document.getElementById('loginForm').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  adminPassword = document.getElementById('password').value;
+  const loginButton = event.currentTarget.querySelector('button');
+  loginButton.disabled = true;
+  try {
+    await apiRequest('/admin/verify', { method: 'POST' });
+    document.getElementById('passwordpage').hidden = true;
+    document.getElementById('adminContent').hidden = false;
+    await loadProducts();
+  } catch (error) {
+    const oldError = event.currentTarget.querySelector('.login-error');
+    if (oldError) oldError.remove();
+    const message = document.createElement('p');
+    message.className = 'login-error error';
+    message.textContent = error.message;
+    loginButton.before(message);
+  } finally { loginButton.disabled = false; }
 });
-const url = `https://sneaker-serer.onrender.com`; // Replace with your Render URL
-const interval = 30000; // Interval in milliseconds (30 seconds)
 
-//Reloader Function
-function reloadWebsite() {
-  axios.get(url)
-    .then(response => {
-      console.log(`Reloaded at ${new Date().toISOString()}: Status Code ${response.status}`);
-    })
-    .catch(error => {
-      console.error(`Error reloading at ${new Date().toISOString()}:`, error.message);
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const submitButton = form.querySelector('button[type="submit"]');
+  submitButton.disabled = true;
+  setStatus('Optimizing image and saving…');
+  try {
+    const imageUrl = await compressImage(document.getElementById('productImage').files[0]);
+    await apiRequest('/data', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: document.getElementById('productName').value,
+        size: Number(document.getElementById('productSize').value),
+        price: Number(document.getElementById('productPrice').value),
+        imageUrl
+      })
     });
-}
-
-setInterval(reloadWebsite, interval);
-function addProductCard(product, indexnum) {
-    const productList = document.getElementById('productList');
-    const productCard = document.createElement('div');
-    productCard.className = 'product-card';
-    productCard.innerHTML = `
-        <h2>Size: ${product.size}</h2>
-        <h3>${product.name}</h3>
-        <img src="${product.imageUrl}" width="90%">
-        <p>Price: $${product.price}</p>
-        <button onclick="deleteProduct(${indexnum})">delete</button>`;
-    productList.appendChild(productCard);
-}
-
-function addProductToServer(product) {
-    fetch('https://sneaker-serer.onrender.com/data', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(product)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(() => {
-        clearInputFields();
-        initializeProductList();
-    })
-    .catch(error => console.error('Error adding product:', error));
-}
-
-function initializeProductList() {
-    fetch('https://sneaker-serer.onrender.com/data')
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(products => {
-        document.getElementById('productList').innerHTML = '';
-        products.forEach((product, index) => {
-            addProductCard(product, index);
-        });
-    })
-    .catch(error => console.error('Error fetching products:', error));
-}
-
-function deleteProduct(indexnum) {
-    fetch(`https://sneaker-serer.onrender.com/data/${indexnum}`, {
-        method: 'DELETE'
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(() => {
-        initializeProductList();
-    })
-    .catch(error => console.error('Error deleting product:', error));
-}
-
-document.getElementById('deleteButton').addEventListener('click', function() {
-    const num = document.getElementById('index').value;
-    deleteProduct(num);
+    form.reset();
+    setStatus('Product saved permanently.', 'success');
+    await loadProducts();
+  } catch (error) {
+    setStatus(error.message, 'error');
+    if (error.message.includes('password')) document.getElementById('passwordpage').hidden = false;
+  } finally { submitButton.disabled = false; }
 });
 
-function closeModel() {
-    const model = document.getElementById("passwordpage");
-    model.style.display = "none";
-    document.getElementById("error").textContent = "";
-}
-
-function checkPassword() {
-    var correctPassword = "Gilbert@6737";
-    const pass = document.getElementById("password").value;
-    var errorMessage = document.getElementById("error");
-    if (pass === correctPassword) {
-        closeModel();
-        clear();
-    } else {
-        errorMessage.textContent = "Incorrect password. Please try again.";
-    }
-}
-
-function clearInputFields() {
-    document.getElementById('productName').value = '';
-    document.getElementById('productSize').value = '';
-    document.getElementById('productPrice').value = '';
-    document.getElementById('productImage').value = '';
-    document.getElementById('index').value = '';
-    document.getElementById('productList').innerHTML = '';
-}
-
-function clear() {
-    document.getElementById("password").value = "";
-}
-
-function openBar() {
-    const bar = document.getElementById('sidebar');
-    bar.style.width = "300px";
-    document.getElementById('half-circle').style.display = "none";
-    document.getElementById('expand').style.display = "none";
-    document.getElementById('close').style.display = "block";
-    document.getElementById('close-circle').style.display = "block";
-    document.getElementById('xmark').style.display = "block";
-}
-
-function closeBar() {
-    const bar = document.getElementById('sidebar');
-    bar.style.width = "0";
-    document.getElementById('half-circle').style.display = "block";
-    document.getElementById('expand').style.display = "block";
-    document.getElementById('close').style.display = "none";
-    document.getElementById('close-circle').style.display = "none";
-    document.getElementById('xmark').style.display = "none";
-}
-
-window.addEventListener('load', initializeProductList);
+productList.addEventListener('click', async (event) => {
+  const button = event.target.closest('[data-delete]');
+  if (!button || !confirm('Remove this product from the store?')) return;
+  button.disabled = true;
+  try { await apiRequest(`/data/${button.dataset.delete}`, { method: 'DELETE' }); await loadProducts(); }
+  catch (error) { setStatus(error.message, 'error'); button.disabled = false; }
+});

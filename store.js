@@ -1,79 +1,46 @@
-// Function to add a product card to the DOM
-function addProductCard(product) {
-    const productList = document.getElementById('productList');
-    const productCard = document.createElement('div');
-    productCard.className = 'product-card';
-    productCard.innerHTML = `
-        <h2>Size: ${product.size}</h2>
-        <h3>${product.name}</h3>
-        <img src="${product.imageUrl}" width="90%" >
-        <p>Price: $${product.price}</p>
-    `;
-    productList.appendChild(productCard);
+const API_URL = 'https://minty-kicks.onrender.com';
+const productList = document.getElementById('productList');
+const sizeSelector = document.getElementById('sizeSelector');
+const statusMessage = document.getElementById('statusMessage');
+let products = [];
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char]);
 }
 
-// Retrieve products from the server and display them based on size
-function initializeProductList(size) {
-    fetch('https://sneaker-serer.onrender.com/data')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(products => {
-            document.getElementById('productList').innerHTML = '';
-            products.forEach((product, index) => {
-                if (product.size === size||size==0) {
-                    addProductCard(product, index);
-                }
-            });
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-        });
+function productCard(product) {
+  return `<article class="product-card">
+    <div class="product-image-wrap"><img src="${product.imageUrl}" alt="${escapeHtml(product.name)}" loading="lazy"></div>
+    <div class="product-info">
+      <span class="size-pill">Men's ${Number(product.size).toFixed(product.size % 1 ? 1 : 0)}</span>
+      <h3>${escapeHtml(product.name)}</h3>
+      <div class="product-bottom"><strong>$${Number(product.price).toFixed(2)}</strong><a href="contact.html">Make an offer</a></div>
+    </div>
+  </article>`;
 }
 
-// Call initializeProductList on page load with the default size
-window.addEventListener('load', function() {
-    initializeProductList(document.getElementById('sizeSelector').value);
-});
-
-// Function to clear the product list
-function clear() {
-    const productList = document.getElementById('productList');
-    productList.innerHTML = '';
+function renderProducts() {
+  const selectedSize = Number(sizeSelector.value);
+  const visible = selectedSize ? products.filter((product) => Number(product.size) === selectedSize) : products;
+  statusMessage.textContent = `${visible.length} ${visible.length === 1 ? 'pair' : 'pairs'} available`;
+  productList.innerHTML = visible.length
+    ? visible.map(productCard).join('')
+    : '<div class="empty-state"><h3>No pairs in this size yet</h3><p>Try another size or check back soon.</p></div>';
 }
 
-// Event listener for the search button to filter products by size
-document.getElementById('searchSize').addEventListener('click', function() {
-    clear();
-    initializeProductList(document.getElementById('sizeSelector').value);
-});
-
-// Prevent the default action for the sizeNeeded button
-document.getElementById('sizeNeeded').addEventListener('click', function(event) {
-    event.preventDefault();
-});
-
-// Function to open the sidebar
-function openBar() {
-    const bar = document.getElementById('sidebar');
-    bar.style.width = "300px";
-    document.getElementById('half-circle').style.display = "none";
-    document.getElementById('expand').style.display = "none";
-    document.getElementById('close').style.display = "block";
-    document.getElementById('close-circle').style.display = "block";
-    document.getElementById('xmark').style.display = "block";
+async function loadProducts() {
+  productList.innerHTML = '<div class="empty-state"><p>Loading the latest inventory…</p></div>';
+  try {
+    const response = await fetch(`${API_URL}/data`);
+    if (!response.ok) throw new Error('Inventory request failed');
+    products = await response.json();
+    renderProducts();
+  } catch (_error) {
+    statusMessage.textContent = 'Inventory unavailable';
+    productList.innerHTML = '<div class="empty-state"><h3>We could not load the collection</h3><p>Please refresh in a moment.</p></div>';
+  }
 }
 
-// Function to close the sidebar
-function closeBar() {
-    const bar = document.getElementById('sidebar');
-    bar.style.width = "0";
-    document.getElementById('half-circle').style.display = "block";
-    document.getElementById('expand').style.display = "block";
-    document.getElementById('close').style.display = "none";
-    document.getElementById('close-circle').style.display = "none";
-    document.getElementById('xmark').style.display = "none";
-}
+sizeSelector.addEventListener('change', renderProducts);
+document.getElementById('sizeNeeded').addEventListener('submit', (event) => event.preventDefault());
+window.addEventListener('DOMContentLoaded', loadProducts);
