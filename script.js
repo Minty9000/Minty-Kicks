@@ -54,7 +54,13 @@ async function loadProducts() {
     productList.innerHTML = products.length ? products.map((product) => `
       <article class="admin-product">
         <img src="${product.imageUrl}" alt="">
-        <div><strong>${escapeHtml(product.name)}</strong><span>Size ${product.size} · $${Number(product.price).toFixed(2)}</span></div>
+        <div class="product-summary"><strong>${escapeHtml(product.name)}</strong><span>Men's size ${product.size}</span></div>
+        <div class="price-editor">
+          <label class="sr-only" for="price-${product.id}">Price for ${escapeHtml(product.name)}</label>
+          <span>$</span>
+          <input id="price-${product.id}" type="number" min="0" max="100000" step="0.01" value="${Number(product.price).toFixed(2)}" data-price-input="${product.id}">
+          <button type="button" class="save-price-button" data-save-price="${product.id}">Save</button>
+        </div>
         <button class="danger-button" data-delete="${product.id}" aria-label="Delete ${escapeHtml(product.name)}">Delete</button>
       </article>`).join('') : '<p class="muted">No inventory yet.</p>';
   } catch (_error) {
@@ -108,6 +114,29 @@ form.addEventListener('submit', async (event) => {
 });
 
 productList.addEventListener('click', async (event) => {
+  const saveButton = event.target.closest('[data-save-price]');
+  if (saveButton) {
+    const id = saveButton.dataset.savePrice;
+    const input = productList.querySelector(`[data-price-input="${id}"]`);
+    const price = Number(input.value);
+    saveButton.disabled = true;
+    saveButton.textContent = 'Saving…';
+    try {
+      const updated = await apiRequest(`/data/${id}/price`, {
+        method: 'PATCH',
+        body: JSON.stringify({ price })
+      });
+      input.value = Number(updated.price).toFixed(2);
+      saveButton.textContent = 'Saved';
+      setStatus('Price updated on the storefront.', 'success');
+      setTimeout(() => { saveButton.textContent = 'Save'; }, 1400);
+    } catch (error) {
+      setStatus(error.message, 'error');
+      saveButton.textContent = 'Save';
+    } finally { saveButton.disabled = false; }
+    return;
+  }
+
   const button = event.target.closest('[data-delete]');
   if (!button || !confirm('Remove this product from the store?')) return;
   button.disabled = true;

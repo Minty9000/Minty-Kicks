@@ -84,6 +84,25 @@ app.post('/data', requireAdmin, async (req, res, next) => {
   } catch (error) { next(error); }
 });
 
+app.patch('/data/:id/price', requireAdmin, async (req, res, next) => {
+  const price = Number(req.body.price);
+  if (!Number.isFinite(price) || price < 0 || price > 100000) {
+    return res.status(400).json({ message: 'Enter a valid price.' });
+  }
+
+  try {
+    const { rows } = await pool.query(
+      'UPDATE products SET price = $1 WHERE id = $2 RETURNING id, price::float',
+      [price, req.params.id]
+    );
+    if (rows.length === 0) return res.status(404).json({ message: 'Product not found.' });
+    res.json(rows[0]);
+  } catch (error) {
+    if (error.code === '22P02') return res.status(400).json({ message: 'Invalid product ID.' });
+    next(error);
+  }
+});
+
 app.delete('/data/:id', requireAdmin, async (req, res, next) => {
   try {
     const result = await pool.query('DELETE FROM products WHERE id = $1', [req.params.id]);
