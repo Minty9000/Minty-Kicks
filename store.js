@@ -9,12 +9,17 @@ function escapeHtml(value) {
 }
 
 function productCard(product) {
+  const offerParams = new URLSearchParams({
+    product: product.name,
+    size: String(product.size),
+    price: Number(product.price).toFixed(2)
+  });
   return `<article class="product-card">
     <div class="product-image-wrap"><img src="${product.imageUrl}" alt="${escapeHtml(product.name)}" loading="lazy"></div>
     <div class="product-info">
       <span class="size-pill">Men's ${Number(product.size).toFixed(product.size % 1 ? 1 : 0)}</span>
       <h3>${escapeHtml(product.name)}</h3>
-      <div class="product-bottom"><strong>$${Number(product.price).toFixed(2)}</strong><a href="contact.html">Make an offer</a></div>
+      <div class="product-bottom"><strong>$${Number(product.price).toFixed(2)}</strong><a href="contact.html?${offerParams.toString()}#inquiry">Make an offer</a></div>
     </div>
   </article>`;
 }

@@ -4,7 +4,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "node --check server.js && node --check script.js && node --check store.js"
+    "test": "node --check server.js && node --check script.js && node --check store.js && node --check contact.js"
   },
   "keywords": [],
   "author": "",
