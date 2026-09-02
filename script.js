@@ -2,6 +2,9 @@ const API_URL = 'https://minty-kicks.onrender.com';
 const productList = document.getElementById('productList');
 const form = document.getElementById('productForm');
 const formStatus = document.getElementById('formStatus');
+const productType = document.getElementById('productType');
+const productSize = document.getElementById('productSize');
+const productDetails = document.getElementById('productDetails');
 let adminPassword = '';
 
 function escapeHtml(value) {
@@ -11,6 +14,21 @@ function escapeHtml(value) {
 function setStatus(message, type = '') {
   formStatus.textContent = message;
   formStatus.className = `form-status ${type}`;
+}
+
+function syncItemFields() {
+  const isCard = productType.value === 'card';
+  document.getElementById('sneakerFields').hidden = isCard;
+  document.getElementById('cardFields').hidden = !isCard;
+  productSize.disabled = isCard;
+  productSize.required = !isCard;
+  productDetails.disabled = !isCard;
+  productDetails.required = isCard;
+  document.getElementById('productName').placeholder = isCard ? '2024 Topps Chrome Victor Wembanyama' : 'Air Jordan 4 Retro';
+}
+
+function itemDescription(product) {
+  return product.itemType === 'card' ? `Trading card · ${product.details || 'Details unavailable'}` : `Sneaker · Men's size ${product.size}`;
 }
 
 function compressImage(file) {
@@ -54,7 +72,7 @@ async function loadProducts() {
     productList.innerHTML = products.length ? products.map((product) => `
       <article class="admin-product">
         <img src="${product.imageUrl}" alt="">
-        <div class="product-summary"><strong>${escapeHtml(product.name)}</strong><span>Men's size ${product.size}</span></div>
+        <div class="product-summary"><strong>${escapeHtml(product.name)}</strong><span>${escapeHtml(itemDescription(product))}</span></div>
         <div class="price-editor">
           <label class="sr-only" for="price-${product.id}">Price for ${escapeHtml(product.name)}</label>
           <span>$</span>
@@ -99,13 +117,16 @@ form.addEventListener('submit', async (event) => {
       method: 'POST',
       body: JSON.stringify({
         name: document.getElementById('productName').value,
-        size: Number(document.getElementById('productSize').value),
+        itemType: productType.value,
+        size: productType.value === 'sneaker' ? Number(productSize.value) : null,
+        details: productType.value === 'card' ? productDetails.value.trim() : null,
         price: Number(document.getElementById('productPrice').value),
         imageUrl
       })
     });
     form.reset();
-    setStatus('Product saved permanently.', 'success');
+    syncItemFields();
+    setStatus('Item saved permanently.', 'success');
     await loadProducts();
   } catch (error) {
     setStatus(error.message, 'error');
@@ -143,3 +164,6 @@ productList.addEventListener('click', async (event) => {
   try { await apiRequest(`/data/${button.dataset.delete}`, { method: 'DELETE' }); await loadProducts(); }
   catch (error) { setStatus(error.message, 'error'); button.disabled = false; }
 });
+
+productType.addEventListener('change', syncItemFields);
+syncItemFields();

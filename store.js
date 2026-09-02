@@ -1,6 +1,6 @@
 const API_URL = 'https://minty-kicks.onrender.com';
 const INVENTORY_URL = `${API_URL}/data`;
-const INVENTORY_CACHE = 'minty-kicks-inventory-v1';
+const INVENTORY_CACHE = 'minty-kicks-inventory-v2';
 const productList = document.getElementById('productList');
 const sizeSelector = document.getElementById('sizeSelector');
 const statusMessage = document.getElementById('statusMessage');
@@ -11,15 +11,21 @@ function escapeHtml(value) {
 }
 
 function productCard(product) {
+  const isCard = product.itemType === 'card';
   const offerParams = new URLSearchParams({
     product: product.name,
-    size: String(product.size),
+    itemType: isCard ? 'card' : 'sneaker',
     price: Number(product.price).toFixed(2)
   });
+  if (isCard) offerParams.set('details', product.details || 'Trading card');
+  else offerParams.set('size', String(product.size));
+  const itemLabel = isCard
+    ? escapeHtml(product.details || 'Trading card')
+    : `Men's ${Number(product.size).toFixed(Number(product.size) % 1 ? 1 : 0)}`;
   return `<article class="product-card">
     <div class="product-image-wrap"><img src="${product.imageUrl}" alt="${escapeHtml(product.name)}" loading="lazy"></div>
     <div class="product-info">
-      <span class="size-pill">Men's ${Number(product.size).toFixed(product.size % 1 ? 1 : 0)}</span>
+      <span class="size-pill">${itemLabel}</span>
       <h3>${escapeHtml(product.name)}</h3>
       <div class="product-bottom"><strong>$${Number(product.price).toFixed(2)}</strong><a href="contact.html?${offerParams.toString()}#inquiry">Make an offer</a></div>
     </div>
@@ -27,12 +33,16 @@ function productCard(product) {
 }
 
 function renderProducts() {
-  const selectedSize = Number(sizeSelector.value);
-  const visible = selectedSize ? products.filter((product) => Number(product.size) === selectedSize) : products;
-  statusMessage.textContent = `${visible.length} ${visible.length === 1 ? 'pair' : 'pairs'} available`;
+  const filter = sizeSelector.value;
+  const visible = filter === 'cards'
+    ? products.filter((product) => product.itemType === 'card')
+    : filter.startsWith('size:')
+      ? products.filter((product) => product.itemType !== 'card' && Number(product.size) === Number(filter.slice(5)))
+      : products;
+  statusMessage.textContent = `${visible.length} ${visible.length === 1 ? 'item' : 'items'} available`;
   productList.innerHTML = visible.length
     ? visible.map(productCard).join('')
-    : '<div class="empty-state"><h3>No pairs in this size yet</h3><p>Try another size or check back soon.</p></div>';
+    : '<div class="empty-state"><h3>No matching items yet</h3><p>Try another filter or check back soon.</p></div>';
 }
 
 async function readCachedProducts() {
@@ -70,7 +80,7 @@ async function loadProducts() {
   }
 
   try {
-    const response = await fetch(INVENTORY_URL);
+    const response = await fetch(INVENTORY_URL, { cache: 'no-cache' });
     if (!response.ok) throw new Error('Inventory request failed');
     const responseForCache = response.clone();
     const freshProducts = await response.json();

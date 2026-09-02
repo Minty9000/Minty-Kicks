@@ -20,9 +20,10 @@ const pool = new Pool({
 });
 
 const allowedOrigins = (process.env.FRONTEND_URL || '').split(',').map((value) => value.trim()).filter(Boolean);
+const localPreviewOrigins = new Set(['http://127.0.0.1:4173', 'http://localhost:4173']);
 app.use(cors({
   origin(origin, callback) {
-    if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) return callback(null, true);
+    if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin) || localPreviewOrigins.has(origin)) return callback(null, true);
     callback(new Error('Origin not allowed'));
   }
 }));
@@ -38,11 +39,15 @@ function requireAdmin(req, res, next) {
 
 function validateProduct(body) {
   const name = String(body.name || '').trim();
-  const size = Number(body.size);
+  const itemType = String(body.itemType || 'sneaker');
+  const size = body.size === null || body.size === '' || body.size === undefined ? null : Number(body.size);
+  const details = String(body.details || '').trim();
   const price = Number(body.price);
   const imageUrl = String(body.imageUrl || '');
-  if (!name || name.length > 120) return 'Enter a product name under 120 characters.';
-  if (!Number.isFinite(size) || size < 1 || size > 30) return 'Enter a valid shoe size.';
+  if (!['sneaker', 'card'].includes(itemType)) return 'Select a valid item type.';
+  if (!name || name.length > 120) return 'Enter an item name under 120 characters.';
+  if (itemType === 'sneaker' && (!Number.isFinite(size) || size < 1 || size > 30)) return 'Enter a valid shoe size.';
+  if (itemType === 'card' && (!details || details.length > 120)) return 'Enter card details under 120 characters.';
   if (!Number.isFinite(price) || price < 0 || price > 100000) return 'Enter a valid price.';
   if (!imageUrl.startsWith('data:image/') || imageUrl.length > 2_800_000) return 'Choose an image under 2 MB.';
   return null;
@@ -52,11 +57,16 @@ async function initializeDatabase() {
   await pool.query(`CREATE TABLE IF NOT EXISTS products (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(120) NOT NULL,
-    size NUMERIC(4,1) NOT NULL,
+    item_type VARCHAR(20) NOT NULL DEFAULT 'sneaker',
+    size NUMERIC(4,1),
+    details VARCHAR(120),
     price NUMERIC(10,2) NOT NULL,
     image_url TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-  )`);
+  );
+  ALTER TABLE products ADD COLUMN IF NOT EXISTS item_type VARCHAR(20) NOT NULL DEFAULT 'sneaker';
+  ALTER TABLE products ADD COLUMN IF NOT EXISTS details VARCHAR(120);
+  ALTER TABLE products ALTER COLUMN size DROP NOT NULL;`);
 }
 
 app.get('/health', async (_req, res, next) => {
@@ -67,7 +77,7 @@ app.get('/data', async (_req, res, next) => {
   try {
     res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=86400');
     if (inventoryCache && Date.now() < inventoryCacheExpiresAt) return res.json(inventoryCache);
-    const { rows } = await pool.query('SELECT id, name, size::float, price::float, image_url AS "imageUrl", created_at AS "createdAt" FROM products ORDER BY created_at DESC');
+    const { rows } = await pool.query('SELECT id, name, item_type AS "itemType", size::float, details, price::float, image_url AS "imageUrl", created_at AS "createdAt" FROM products ORDER BY created_at DESC');
     inventoryCache = rows;
     inventoryCacheExpiresAt = Date.now() + inventoryCacheTtlMs;
     res.json(rows);
@@ -82,10 +92,13 @@ app.post('/data', requireAdmin, async (req, res, next) => {
   const validationError = validateProduct(req.body);
   if (validationError) return res.status(400).json({ message: validationError });
   try {
-    const { name, size, price, imageUrl } = req.body;
+    const { name, price, imageUrl } = req.body;
+    const itemType = String(req.body.itemType || 'sneaker');
+    const size = itemType === 'sneaker' ? Number(req.body.size) : null;
+    const details = itemType === 'card' ? String(req.body.details || '').trim() : null;
     const { rows } = await pool.query(
-      'INSERT INTO products (name, size, price, image_url) VALUES ($1, $2, $3, $4) RETURNING id, name, size::float, price::float, image_url AS "imageUrl", created_at AS "createdAt"',
-      [name.trim(), Number(size), Number(price), imageUrl]
+      'INSERT INTO products (name, item_type, size, details, price, image_url) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, name, item_type AS "itemType", size::float, details, price::float, image_url AS "imageUrl", created_at AS "createdAt"',
+      [name.trim(), itemType, size, details, Number(price), imageUrl]
     );
     inventoryCache = null;
     inventoryCacheExpiresAt = 0;
