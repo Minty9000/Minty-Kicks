@@ -5,6 +5,9 @@ const { Pool } = require('pg');
 const app = express();
 const port = process.env.PORT || 3000;
 const databaseUrl = process.env.DATABASE_URL;
+const inventoryCacheTtlMs = 60_000;
+let inventoryCache = null;
+let inventoryCacheExpiresAt = 0;
 
 if (!databaseUrl) {
   console.error('DATABASE_URL is required.');
@@ -62,7 +65,11 @@ app.get('/health', async (_req, res, next) => {
 
 app.get('/data', async (_req, res, next) => {
   try {
+    res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=86400');
+    if (inventoryCache && Date.now() < inventoryCacheExpiresAt) return res.json(inventoryCache);
     const { rows } = await pool.query('SELECT id, name, size::float, price::float, image_url AS "imageUrl", created_at AS "createdAt" FROM products ORDER BY created_at DESC');
+    inventoryCache = rows;
+    inventoryCacheExpiresAt = Date.now() + inventoryCacheTtlMs;
     res.json(rows);
   } catch (error) { next(error); }
 });
@@ -80,6 +87,8 @@ app.post('/data', requireAdmin, async (req, res, next) => {
       'INSERT INTO products (name, size, price, image_url) VALUES ($1, $2, $3, $4) RETURNING id, name, size::float, price::float, image_url AS "imageUrl", created_at AS "createdAt"',
       [name.trim(), Number(size), Number(price), imageUrl]
     );
+    inventoryCache = null;
+    inventoryCacheExpiresAt = 0;
     res.status(201).json(rows[0]);
   } catch (error) { next(error); }
 });
@@ -96,6 +105,8 @@ app.patch('/data/:id/price', requireAdmin, async (req, res, next) => {
       [price, req.params.id]
     );
     if (rows.length === 0) return res.status(404).json({ message: 'Product not found.' });
+    inventoryCache = null;
+    inventoryCacheExpiresAt = 0;
     res.json(rows[0]);
   } catch (error) {
     if (error.code === '22P02') return res.status(400).json({ message: 'Invalid product ID.' });
@@ -107,6 +118,8 @@ app.delete('/data/:id', requireAdmin, async (req, res, next) => {
   try {
     const result = await pool.query('DELETE FROM products WHERE id = $1', [req.params.id]);
     if (result.rowCount === 0) return res.status(404).json({ message: 'Product not found.' });
+    inventoryCache = null;
+    inventoryCacheExpiresAt = 0;
     res.status(204).end();
   } catch (error) {
     if (error.code === '22P02') return res.status(400).json({ message: 'Invalid product ID.' });
