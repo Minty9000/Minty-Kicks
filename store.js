@@ -1,4 +1,6 @@
-const API_URL = 'https://minty-kicks.onrender.com';
+const IS_LOCAL = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+const API_URL = IS_LOCAL ? 'http://localhost:3000' : '';
+const FALLBACK_API_URL = IS_LOCAL ? '' : 'https://minty-kicks.onrender.com';
 const INVENTORY_URL = `${API_URL}/data`;
 const INVENTORY_CACHE = 'minty-kicks-inventory-v2';
 const productList = document.getElementById('productList');
@@ -68,6 +70,16 @@ async function cacheProducts(response) {
   }
 }
 
+async function fetchInventory() {
+  try {
+    const response = await fetch(INVENTORY_URL, { cache: 'no-cache' });
+    if (response.ok || !FALLBACK_API_URL || response.status < 500) return response;
+  } catch (error) {
+    if (!FALLBACK_API_URL) throw error;
+  }
+  return fetch(`${FALLBACK_API_URL}/data`, { cache: 'no-cache' });
+}
+
 async function loadProducts() {
   const cachedProducts = await readCachedProducts();
   const hasCachedProducts = cachedProducts !== null;
@@ -80,7 +92,7 @@ async function loadProducts() {
   }
 
   try {
-    const response = await fetch(INVENTORY_URL, { cache: 'no-cache' });
+    const response = await fetchInventory();
     if (!response.ok) throw new Error('Inventory request failed');
     const responseForCache = response.clone();
     const freshProducts = await response.json();

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    { "source": "/data", "destination": "/api?action=data" },
+    { "source": "/data/:id/price", "destination": "/api?action=price&id=:id" },
+    { "source": "/data/:id", "destination": "/api?action=item&id=:id" },
+    { "source": "/admin/verify", "destination": "/api?action=verify" },
+    { "source": "/health", "destination": "/api?action=health" }
+  ]
+}
